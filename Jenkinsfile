@@ -18,8 +18,8 @@ pipeline {
         CREDENTIALS_ID = "nexus-credentials" // ID de las credenciales almacenadas en Jenkins
         IMAGE_NAME = "sumador" // Nombre de la imagen Docker
         IMAGE_TAG = "${env.BUILD_NUMBER}" // Etiqueta de la imagen basada en el
-        NEXUS_HOST = "nexus:8083" // Host y puerto de Nexus
-        NEXUS_URL = "http://nexus:8083" // URL completa de Nexus
+        NEXUS_HOST = "nexus:8081" // Host y puerto de Nexus
+        NEXUS_URL = "http://nexus:8081" // URL completa de Nexus
         NEXUS_REPO = "repository/myrepo" // Ruta del repositorio en Nexus
     }
 
@@ -49,17 +49,14 @@ pipeline {
         }
 
         stage('Deploy Image') {
-          steps {
-            withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
-                script {
-                  docker.withRegistry("${NEXUS_URL}", "${CREDENTIALS_ID}") {
-                    def imageName = "${IMAGE_NAME}:${IMAGE_TAG}"
-                    def dockerImage = docker.build(imageName, '.')
-                    dockerImage.push()
-                  }
+            steps {
+                withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                    sh """
+                    echo $NEXUS_PASSWORD | docker login ${NEXUS_HOST} -u $NEXUS_USERNAME --password-stdin
+                    docker push ${NEXUS_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
+                    """
                 }
             }
-          }
         }
     }
 
