@@ -67,12 +67,14 @@ pipeline {
     stage('Security - Trivy Scan') {
         steps {
             echo "Escaneando imagen con Trivy..."
-            sh """docker run --rm \
-                -v /var/run/docker.sock:/var/run/docker.sock \ 
+            sh """
+            docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
                 aquasec/trivy image \
                 --severity CRITICAL \
                 --exit-code 1 \
-                localhost:8083/${IMAGE_NAME}:${IMAGE_TAG}"""
+                localhost:8083/${IMAGE_NAME}:${IMAGE_TAG}
+            """
         }
     }
 
