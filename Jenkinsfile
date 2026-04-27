@@ -18,8 +18,8 @@ pipeline {
         CREDENTIALS_ID = "nexus-credentials" // ID de las credenciales almacenadas en Jenkins
         IMAGE_NAME = "sumador" // Nombre de la imagen Docker
         IMAGE_TAG = "${env.BUILD_NUMBER}" // Etiqueta de la imagen basada en el
-        NEXUS_HOST = "localhost:8081" // Host y puerto de Nexus
-        NEXUS_URL = "http://localhost:8081" // URL completa de Nexus
+        NEXUS_HOST = "localhost:8083" // Host y puerto de Nexus
+        NEXUS_URL = "http://localhost:8083" // URL completa de Nexus
         NEXUS_REPO = "repository/myrepo" // Ruta del repositorio en Nexus
     }
 
