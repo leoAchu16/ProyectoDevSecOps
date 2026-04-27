@@ -56,27 +56,29 @@ pipeline {
                  }
             }
         }
-    }
-    stage('Security - npm audit'){
-        steps {
-            echo "Analizando dependencias con npm audit..."
-            sh "docker run ${IMAGE_NAME}:${IMAGE_TAG} npm audit --audit-level=critical || true"
-        }
-    }
 
-    stage('Security - Trivy Scan') {
-        steps {
-            echo "Escaneando imagen con Trivy..."
-            sh """
-            docker run --rm \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                aquasec/trivy image \
-                --severity CRITICAL \
-                --exit-code 1 \
-                localhost:8083/${IMAGE_NAME}:${IMAGE_TAG}
-            """
+        stage('Security - npm audit'){
+            steps {
+                echo "Analizando dependencias con npm audit..."
+                sh "docker run ${IMAGE_NAME}:${IMAGE_TAG} npm audit --audit-level=critical || true"
+            }
+        }
+
+        stage('Security - Trivy Scan') {
+            steps {
+                echo "Escaneando imagen con Trivy..."
+                sh """
+                docker run --rm \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    aquasec/trivy image \
+                    --severity CRITICAL \
+                    --exit-code 1 \
+                    localhost:8083/${IMAGE_NAME}:${IMAGE_TAG}
+                """
+            }
         }
     }
+    
 
     post {
         always {
