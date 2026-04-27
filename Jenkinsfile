@@ -41,10 +41,8 @@ pipeline {
         
         stage('Tag Docker Image') {
             steps {
-                echo "Tagging Docker image for Nexus repository..."
-                sh """
-                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${NEXUS_HOST}/${NEXUS_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
-                """
+                echo "Tagging Docker image for Nexus..."
+                sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${NEXUS_HOST}/${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
 
@@ -52,10 +50,10 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID, usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
                     sh """
-                    echo $NEXUS_PASSWORD | docker login ${NEXUS_HOST} -u $NEXUS_USERNAME --password-stdin
+                    echo \$NEXUS_PASSWORD | docker login ${NEXUS_HOST} -u \$NEXUS_USERNAME --password-stdin
                     docker push ${NEXUS_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
                     """
-                }
+                 }
             }
         }
     }
